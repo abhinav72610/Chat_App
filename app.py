@@ -35,6 +35,24 @@ def login():
             message = 'Failed to login!'
     return render_template('login.html', message=message)
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+
+    message = ''
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        try:
+            save_user(username, email, password)
+            return redirect(url_for('login'))
+        except DuplicateKeyError:
+            message = "User already exists!"
+    return render_template('signup.html', message=message) 
+
+
 
 @app.route("/logout/")
 @login_required
